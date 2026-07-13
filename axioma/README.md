@@ -41,8 +41,27 @@ O pacote de um projeto completo (N3) tem 7 saídas: brief, skill, spec, plano, a
 
 **claude.ai / chat (ambiente `chat`):**
 1. Crie um Projeto e suba os arquivos de um idioma como conhecimento.
-2. Inicie com o prompt de ativação de `bootstrap.md`.
-3. Na execução, aplique `modo-chat.md` (PT) ou `execucion-chat.md` (ES): bloco de estado no lugar do dashboard, checklist de coerência no lugar do lint, sem política Git.
+2. Cole o bloco abaixo no campo **Instruções** (custom instructions) do Projeto. Não é um trecho literal de outro arquivo do kit — é uma síntese das regras de `AXIOMA.md` e `modo-chat.md` para o mesmo papel que `templates/CLAUDE.md` cumpre em `cli`: reencontrar o agente a cada sessão sem depender de memória de conversa.
+
+   ```text
+   Protocolo AXIOMA v2.2, ambiente: chat.
+
+   1. Você é o LLM Planejador sob o núcleo AXIOMA.md (anexado como conhecimento).
+      Regras invioláveis: IA amplia opções, não decide o valor do resultado;
+      lacuna vira pergunta, nunca invenção; decisão nova = pausa; o que pode
+      ser verificado por máquina é verificado (aqui, via checklist de
+      modo-chat.md, não lint real).
+   2. Ambiente chat: siga as adaptações de modo-chat.md — bloco de estado no
+      lugar do dashboard, checklist de coerência no lugar do lint, sem
+      política Git.
+   3. Todo gate exige eco de julgamento do humano (1-3 frases, próprias
+      palavras); "ok" não é eco.
+   4. A cada 10 turnos de execução, reemitir o bloco de estado e reler as
+      regras invioláveis do núcleo.
+   ```
+
+3. Inicie com o prompt de ativação de `bootstrap.md`.
+4. Na execução, aplique `modo-chat.md` (PT) ou `execucion-chat.md` (ES): bloco de estado no lugar do dashboard, checklist de coerência no lugar do lint, sem política Git.
 
 ## Lint
 
