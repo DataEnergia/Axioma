@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AXIOMA · Dashboard</title>
+<style>
+  :root{--teal:#052f35;--teal-deep:#041f24;--cream:#f5f1e8;--cream-deep:#e8e2d4;--orange:#ff6900;--orange-ink:#9c4000;--ink:#1a1a1a;--ink-soft:#4f4f4d;--ok:#1c7c54;--warn:#b3520a;--bad:#a3282e}
+  *{box-sizing:border-box;margin:0}
+  body{font:15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,sans-serif;background:var(--cream);color:var(--ink);padding:24px}
+  .wrap{max-width:1080px;margin:0 auto}
+  header{display:flex;flex-wrap:wrap;align-items:baseline;gap:12px;border-bottom:2px solid var(--teal);padding-bottom:12px;margin-bottom:20px}
+  h1{font-size:22px;color:var(--teal)}
+  .kicker{font:600 11px/1 ui-monospace,"JetBrains Mono",monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--orange-ink)}
+  .meta{margin-left:auto;font:12px ui-monospace,monospace;color:var(--ink-soft);text-align:right}
+  .pills{display:flex;gap:8px;margin:14px 0 20px;flex-wrap:wrap}
+  .pill{font:600 12px ui-monospace,monospace;padding:4px 10px;border-radius:3px;background:var(--teal);color:var(--cream)}
+  .pill.risk-alto,.pill.risk-alta{background:var(--bad)}
+  .pill.risk-medio,.pill.risk-média,.pill.risk-media{background:var(--warn)}
+  .pill.risk-baixo,.pill.risk-bajo{background:var(--ok)}
+  .bar{height:8px;background:var(--cream-deep);border-radius:4px;overflow:hidden;margin-bottom:24px}
+  .bar>div{height:100%;background:var(--orange)}
+  h2{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--teal);margin:22px 0 10px}
+  .kanban{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  .col{background:var(--cream-deep);border-radius:6px;padding:10px;min-height:60px}
+  .col h3{font:600 11px ui-monospace,monospace;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:8px}
+  .card{background:#fff;border-left:3px solid var(--teal);border-radius:3px;padding:7px 9px;margin-bottom:6px;font-size:13.5px}
+  .card.gate{border-left-color:var(--orange)}
+  .card .id{font:600 11px ui-monospace,monospace;color:var(--orange-ink);margin-right:6px}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  ul{list-style:none}
+  li{padding:6px 0;border-bottom:1px solid var(--cream-deep);font-size:13.5px}
+  .lv{font:600 10px ui-monospace,monospace;padding:2px 6px;border-radius:2px;margin-right:6px;color:#fff}
+  .lv.alto,.lv.alta{background:var(--bad)}.lv.medio,.lv.média,.lv.media{background:var(--warn)}.lv.baixo,.lv.bajo{background:var(--ok)}
+  .verdict-ok{color:var(--ok);font-weight:600}.verdict-fail{color:var(--bad);font-weight:600}
+  .echo{display:block;color:var(--ink-soft);font-size:12.5px;font-style:italic;margin-top:2px}
+  .metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+  .metric{background:var(--teal);color:var(--cream);border-radius:6px;padding:12px;text-align:center}
+  .metric b{display:block;font-size:26px;color:var(--orange)}
+  .metric span{font:11px ui-monospace,monospace;letter-spacing:.06em;text-transform:uppercase;color:var(--cream)}
+  .empty{color:var(--ink-soft);font-size:13px;font-style:italic}
+  .fatal{background:#fff;border-left:4px solid var(--bad);padding:14px;border-radius:4px;font-size:14px}
+  @media(max-width:760px){.kanban,.grid2,.metrics{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<!-- ============================================================
+  v2.2: o estado NÃO vive mais aqui. Ele vive em dashboard-data.js
+  (const DATA = { ... } com JSON estrito entre as chaves).
+  O agente edita apenas dashboard-data.js; este HTML só renderiza.
+  tools/axioma-lint.py valida o JSON e a coerência com o plano.
+  ============================================================ -->
+<script src="dashboard-data.js"></script>
+
+<div class="wrap">
+  <div id="fatal" class="fatal" style="display:none"></div>
+  <header>
+    <div><div class="kicker">AXIOMA</div><h1 id="t-project"></h1></div>
+    <div class="meta" id="t-meta"></div>
+  </header>
+  <div class="pills" id="t-pills"></div>
+  <div class="bar"><div id="t-bar"></div></div>
+
+  <h2 id="l-steps"></h2>
+  <div class="kanban">
+    <div class="col"><h3 id="l-pending"></h3><div id="c-pending"></div></div>
+    <div class="col"><h3 id="l-doing"></h3><div id="c-doing"></div></div>
+    <div class="col"><h3 id="l-done"></h3><div id="c-done"></div></div>
+  </div>
+
+  <div class="grid2">
+    <div><h2 id="l-risks"></h2><ul id="c-risks"></ul></div>
+    <div><h2 id="l-decisions"></h2><ul id="c-decisions"></ul></div>
+  </div>
+
+  <h2 id="l-gates"></h2><ul id="c-gates"></ul>
+
+  <h2 id="l-metrics"></h2>
+  <div class="metrics" id="c-metrics"></div>
+</div>
+
+<script>
+(function(){
+  if (typeof DATA === "undefined") {
+    document.getElementById("fatal").style.display = "block";
+    document.getElementById("fatal").textContent =
+      "dashboard-data.js ausente ou inválido. Verifique o arquivo ao lado deste HTML e rode tools/axioma-lint.py.";
+    return;
+  }
+  const L = {
+    pt:{pending:"Pendente",doing:"Em curso",done:"Concluído",steps:"Microetapas",risks:"Riscos",decisions:"Decisões abertas (aguardando o dono)",gates:"Log de gates",metrics:"Métricas",updated:"atualizado",gate:"GATE",ok:"aprovado",fail:"reprovado",none:"nenhum item",risk:"risco",rework:"retrabalho",reopened:"reabertas",gates_failed:"gates falhados",drift_events:"derivas",echo:"eco"},
+    es:{pending:"Pendiente",doing:"En curso",done:"Concluido",steps:"Microetapas",risks:"Riesgos",decisions:"Decisiones abiertas (esperando al dueño)",gates:"Log de gates",metrics:"Métricas",updated:"actualizado",gate:"GATE",ok:"aprobado",fail:"reprobado",none:"sin ítems",risk:"riesgo",rework:"retrabajo",reopened:"reabiertas",gates_failed:"gates fallidos",drift_events:"derivas",echo:"eco"}
+  }[DATA.lang] || {};
+
+  const $=id=>document.getElementById(id);
+  $("t-project").textContent=DATA.project;
+  $("t-meta").innerHTML=`${L.updated}: ${DATA.updated}<br>commit: ${DATA.commit||"-"} · kit ${DATA.kit_version||"?"} · ${DATA.environment||""}`;
+  $("t-pills").innerHTML=`<span class="pill">${DATA.level}</span><span class="pill risk-${DATA.risk}">${L.risk}: ${DATA.risk}</span><span class="pill">${DATA.environment||""}</span>`;
+  const done=DATA.steps.filter(s=>s.status==="done").length;
+  $("t-bar").style.width=DATA.steps.length?Math.round(100*done/DATA.steps.length)+"%":"0%";
+  $("l-steps").textContent=`${L.steps} (${done}/${DATA.steps.length})`;
+  ["pending","doing","done"].forEach(st=>{
+    $("l-"+st).textContent=L[st];
+    $("c-"+st).innerHTML=DATA.steps.filter(s=>s.status===st).map(s=>
+      `<div class="card${s.gate?" gate":""}"><span class="id">${s.id}</span>${s.name}${s.gate?` <span class="id">· ${L.gate}</span>`:""}</div>`
+    ).join("")||`<div class="empty">${L.none}</div>`;
+  });
+  $("l-risks").textContent=L.risks;
+  $("c-risks").innerHTML=DATA.risks.map(r=>`<li><span class="lv ${r.level}">${r.level}</span>${r.text}</li>`).join("")||`<li class="empty">${L.none}</li>`;
+  $("l-decisions").textContent=L.decisions;
+  $("c-decisions").innerHTML=DATA.decisions.map(d=>`<li>${d}</li>`).join("")||`<li class="empty">${L.none}</li>`;
+  $("l-gates").textContent=L.gates;
+  $("c-gates").innerHTML=DATA.gates.map(g=>
+    `<li><b>${g.step}</b> · ${g.date} · <span class="verdict-${g.verdict==="ok"?"ok":"fail"}">${g.verdict==="ok"?L.ok:L.fail}</span>${g.echo?`<span class="echo">${L.echo}: “${g.echo}”</span>`:""}</li>`
+  ).join("")||`<li class="empty">${L.none}</li>`;
+  $("c-metrics").innerHTML=Object.entries(DATA.metrics).map(([k,v])=>`<div class="metric"><b>${v}</b><span>${L[k]||k}</span></div>`).join("");
+})();
+</script>
+</body>
+</html>

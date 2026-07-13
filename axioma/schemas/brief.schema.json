@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "axioma/brief.schema.json",
+  "title": "AXIOMA brief frontmatter (v2.2)",
+  "type": "object",
+  "required": ["schema", "version", "kit_version", "id", "status", "level", "environment", "risk", "target", "target_decision", "epistemic_debt_risk"],
+  "properties": {
+    "schema": {"const": "axioma/brief"},
+    "version": {"type": ["integer", "string"]},
+    "kit_version": {"type": "string"},
+    "id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$"},
+    "created_at": {"type": "string"},
+    "status": {"enum": ["open", "active", "done", "parked"]},
+    "level": {"enum": ["N1", "N2", "N3"]},
+    "environment": {"enum": ["cli", "chat"]},
+    "risk": {"enum": ["baixo", "médio", "medio", "alto", "bajo"]},
+    "domain": {"type": "string"},
+    "target": {"type": "string"},
+    "target_decision": {"type": "string"},
+    "main_hypothesis": {"type": "string"},
+    "secondary_hypotheses": {"type": "array", "items": {"type": "string"}},
+    "risks": {"type": "array", "items": {"type": "string"}},
+    "missing_evidence": {"type": "array", "items": {"type": "string"}},
+    "open_decisions": {"type": "array", "items": {"type": "string"}},
+    "delegated_to_ai": {"type": "array", "items": {"type": "string"}},
+    "external_validation": {"type": "array", "items": {"type": "string"}},
+    "epistemic_debt_risk": {"enum": ["baixo", "médio", "medio", "alto", "bajo"]},
+    "git_policy": {"type": "string"},
+    "next_agent": {"type": ["string", "null"]},
+    "sources": {"type": "array"}
+  }
+}

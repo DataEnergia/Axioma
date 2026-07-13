@@ -1,0 +1,27 @@
+#!/bin/sh
+# AXIOMA v2.2 · hook commit-msg: transforma duas regras anti-deriva em mecanismo.
+# 1. Bloqueia qualquer commit com axioma-lint em erro.
+# 2. Bloqueia commit de microetapa (mensagem `axioma(mN): ...`) sem dashboard-data.js no stage.
+# Usa commit-msg (e não pre-commit) porque a mensagem só existe nesta etapa.
+# Instalação: cp axioma/templates/hooks/commit-msg .git/hooks/commit-msg && chmod +x .git/hooks/commit-msg
+# Contornar conscientemente (registrar na auditoria): git commit --no-verify
+
+MSG_FILE="$1"
+LINT="axioma/tools/axioma-lint.py"
+
+if [ -f "$LINT" ]; then
+  if ! python3 "$LINT" . ; then
+    echo ""
+    echo "[axioma] commit bloqueado: axioma-lint acusou erro(s). Corrija, ou registre a decisão na auditoria e use --no-verify."
+    exit 1
+  fi
+fi
+
+if [ -f dashboard-data.js ] && grep -qE '^axioma\(m[0-9]+\):' "$MSG_FILE"; then
+  if ! git diff --cached --name-only | grep -q '^dashboard-data\.js$'; then
+    echo "[axioma] commit de microetapa sem dashboard-data.js atualizado no stage. Atualize o estado antes de fechar a microetapa."
+    exit 1
+  fi
+fi
+
+exit 0

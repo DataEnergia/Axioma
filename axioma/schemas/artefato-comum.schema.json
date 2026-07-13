@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "axioma/artefato-comum.schema.json",
+  "title": "AXIOMA frontmatter comum: spec, plan, audit, skill, handoff (v2.2)",
+  "type": "object",
+  "required": ["schema", "version", "id", "brief_id"],
+  "properties": {
+    "schema": {"enum": ["axioma/spec", "axioma/plan", "axioma/audit", "axioma/skill", "axioma/handoff"]},
+    "version": {"type": ["integer", "string"]},
+    "id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$"},
+    "brief_id": {"type": "string"}
+  }
+}

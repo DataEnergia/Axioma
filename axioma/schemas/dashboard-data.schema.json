@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "axioma/dashboard-data.schema.json",
+  "title": "AXIOMA estado do projeto: objeto DATA de dashboard-data.js (v2.2)",
+  "type": "object",
+  "required": ["kit_version", "lang", "project", "level", "risk", "environment", "updated", "steps", "risks", "decisions", "gates", "metrics"],
+  "properties": {
+    "kit_version": {"type": "string"},
+    "lang": {"enum": ["pt", "es"]},
+    "project": {"type": "string"},
+    "level": {"enum": ["N1", "N2", "N3"]},
+    "risk": {"enum": ["baixo", "medio", "média", "alto", "bajo"]},
+    "environment": {"enum": ["cli", "chat"]},
+    "updated": {"type": "string"},
+    "commit": {"type": "string"},
+    "steps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "status", "gate"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^M[0-9]+$"},
+          "name": {"type": "string"},
+          "status": {"enum": ["pending", "doing", "done"]},
+          "gate": {"type": "boolean"}
+        }
+      }
+    },
+    "risks": {
+      "type": "array",
+      "items": {"type": "object", "required": ["text", "level"]}
+    },
+    "decisions": {"type": "array", "items": {"type": "string"}},
+    "gates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["step", "date", "verdict", "echo"],
+        "properties": {
+          "step": {"type": "string"},
+          "date": {"type": "string"},
+          "verdict": {"enum": ["ok", "fail"]},
+          "echo": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "metrics": {
+      "type": "object",
+      "required": ["rework", "reopened", "gates_failed", "drift_events"],
+      "additionalProperties": {"type": "number"}
+    }
+  }
+}
