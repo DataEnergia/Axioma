@@ -63,6 +63,20 @@ O pacote de um projeto completo (N3) tem 7 saídas: brief, skill, spec, plano, a
 3. Inicie com o prompt de ativação de `bootstrap.md`.
 4. Na execução, aplique `modo-chat.md` (PT) ou `execucion-chat.md` (ES): bloco de estado no lugar do dashboard, checklist de coerência no lugar do lint, sem política Git.
 
+### Exemplo: instalando este repositório em um Projeto do claude.ai
+
+**1.** No Projeto, adicione conteúdo do GitHub e selecione a pasta do idioma (aqui, `pt/`) deste repositório como conhecimento.
+
+![Selecionar a pasta pt/ do repositório DataEnergia/Axioma no GitHub](docs/chat-projeto/01-github-adicionar-pasta.png)
+
+**2.** Cole o bloco de Instruções (passo 2 acima) no campo **Instruções** do Projeto; confira em **Arquivos** que a pasta ficou anexada via GitHub.
+
+![Campo Instruções preenchido e pasta pt/ anexada em Arquivos via GitHub](docs/chat-projeto/02-instrucoes-e-arquivos.png)
+
+**3.** Ao abrir um chat novo dentro do Projeto, o modelo já responde como LLM Planejador sob o protocolo, em ambiente `chat`, sem precisar colar o prompt de ativação inteiro de novo.
+
+![Chat confirmando operação como LLM Planejador sob o protocolo AXIOMA em ambiente chat](docs/chat-projeto/03-chat-confirmacao.png)
+
 ## Lint
 
 ```bash
