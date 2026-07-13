@@ -3,6 +3,8 @@
 Protocolo de governança da colaboração humano-IA. Bilíngue PT/ES: carregue **um** idioma por projeto.
 Protocolo de gobernanza de la colaboración humano-IA. Bilingüe PT/ES: carga **un** idioma por proyecto.
 
+Guia completo em PDF: [`AXIOMA-guia-v2_2.pdf`](AXIOMA-guia-v2_2.pdf).
+
 ## Mapa do kit / Mapa del kit
 
 ```text

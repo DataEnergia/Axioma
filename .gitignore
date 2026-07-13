@@ -1,6 +1,5 @@
 OLD/
 *.zip
-*.pdf
 __pycache__/
 *.pyc
 .DS_Store
